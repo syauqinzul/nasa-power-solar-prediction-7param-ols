@@ -1,0 +1,11 @@
+.venv/
+venv/
+env/
+__pycache__/
+.vscode/
+hasil_prediksi*.csv
+evaluasi_model*.txt
+plot*.png
+*.env
+.DS_Store
+outputs/
