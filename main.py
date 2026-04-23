@@ -18,7 +18,7 @@ warnings.filterwarnings('ignore')
 # ============================================================
 # 1. BACA DATA CSV
 # ============================================================
-CSV_FILE = "/mnt/user-data/uploads/POWER_Point_Monthly_20150101_20251231_000d13N_117d50E_UTC.csv"
+CSV_FILE = "POWER_Point_Monthly_20150101_20251231_000d13N_117d50E_UTC.csv"
 
 df_raw = pd.read_csv(CSV_FILE, skiprows=19)
 df_raw.columns = ['PARAMETER','YEAR','JAN','FEB','MAR','APR','MAY','JUN',
@@ -235,7 +235,7 @@ for i in range(len(corr_matrix)):
         ax.text(j, i, f'{val:.3f}', ha='center', va='center', fontsize=8, color=color)
 ax.set_title('Heatmap Korelasi - 7 Parameter + Y\n(Bontang, Kaltim 2015–2025)', fontsize=13, fontweight='bold')
 plt.tight_layout()
-plt.savefig('/mnt/user-data/outputs/A_heatmap_korelasi.png', dpi=300, bbox_inches='tight')
+plt.savefig('outputs/A_heatmap_korelasi.png', dpi=300, bbox_inches='tight')
 plt.close()
 print("\nGambar A disimpan: A_heatmap_korelasi.png")
 
@@ -252,7 +252,7 @@ ax.set_ylabel('Densitas', fontsize=11)
 ax.set_title(f'Distribusi Residual + Overlay Kurva Normal\nShapiro-Wilk: W={sw_stat:.4f}, p={sw_pval:.4f}  ({sw_interp[:40]}...)', fontsize=11)
 ax.legend(fontsize=10)
 plt.tight_layout()
-plt.savefig('/mnt/user-data/outputs/B_distribusi_residual.png', dpi=300, bbox_inches='tight')
+plt.savefig('outputs/B_distribusi_residual.png', dpi=300, bbox_inches='tight')
 plt.close()
 print("Gambar B disimpan: B_distribusi_residual.png")
 
@@ -284,7 +284,7 @@ ax.set_title(f'ACF Plot Residual (Lags s/d 20)\nDurbin-Watson = {dw:.4f}  |  {dw
 ax.set_xticks(lags_x)
 ax.legend(fontsize=10)
 plt.tight_layout()
-plt.savefig('/mnt/user-data/outputs/C_acf_residual.png', dpi=300, bbox_inches='tight')
+plt.savefig('outputs/C_acf_residual.png', dpi=300, bbox_inches='tight')
 plt.close()
 print("Gambar C disimpan: C_acf_residual.png")
 
@@ -315,7 +315,7 @@ ax.legend(fontsize=10)
 ax.set_xlim(min_val, max_val)
 ax.set_ylim(min_val, max_val)
 plt.tight_layout()
-plt.savefig('/mnt/user-data/outputs/D_scatter_pred_interval.png', dpi=300, bbox_inches='tight')
+plt.savefig('outputs/D_scatter_pred_interval.png', dpi=300, bbox_inches='tight')
 plt.close()
 print("Gambar D disimpan: D_scatter_pred_interval.png")
 
@@ -335,7 +335,7 @@ axes[-1].set_xticklabels([f'{y}\nJan' for y in range(2015, 2026)], fontsize=8)
 fig.suptitle('Time Series 7 Parameter NASA POWER\nBontang, Kalimantan Timur (0.13°N, 117.50°E)  |  Jan 2015 – Des 2025',
              fontsize=12, fontweight='bold', y=1.01)
 plt.tight_layout()
-plt.savefig('/mnt/user-data/outputs/E_timeseries_7param.png', dpi=300, bbox_inches='tight')
+plt.savefig('outputs/E_timeseries_7param.png', dpi=300, bbox_inches='tight')
 plt.close()
 print("Gambar E disimpan: E_timeseries_7param.png")
 
@@ -374,7 +374,7 @@ axes[2].grid(True, alpha=0.3)
 
 fig.suptitle('Residual Diagnostic Plots', fontsize=13, fontweight='bold')
 plt.tight_layout()
-plt.savefig('/mnt/user-data/outputs/F_residual_diagnostic.png', dpi=300, bbox_inches='tight')
+plt.savefig('outputs/F_residual_diagnostic.png', dpi=300, bbox_inches='tight')
 plt.close()
 print("Gambar F disimpan: F_residual_diagnostic.png")
 
@@ -393,7 +393,7 @@ ax.set_xlim(min_val, max_val)
 ax.set_ylim(min_val, max_val)
 ax.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig('/mnt/user-data/outputs/G_train_test_scatter.png', dpi=300, bbox_inches='tight')
+plt.savefig('outputs/G_train_test_scatter.png', dpi=300, bbox_inches='tight')
 plt.close()
 print("Gambar G disimpan: G_train_test_scatter.png")
 
@@ -421,5 +421,43 @@ for i, mn in enumerate(mnames):
     fmt = f"{mn:<8} {val_train:>12.6f} {val_test:>12.6f} {val_all:>14.6f}"
     print(fmt)
 
-print("\nSemua gambar tersimpan di /mnt/user-data/outputs/ (300 dpi)")
+# ============================================================
+# SIMPAN HASIL KE FILE TXT
+# ============================================================
+with open('outputs/hasil_analisis.txt', 'w') as f:
+    f.write("="*65 + "\n")
+    f.write("ANALISIS OLS - ESTIMASI DAYA PANEL SURYA\n")
+    f.write("="*65 + "\n\n")
+    
+    f.write(f"Total data: {len(df_merged)} baris\n")
+    f.write(f"Periode: {int(df_merged['YEAR'].min())}-{int(df_merged.iloc[0]['MONTH']):02d} s/d {int(df_merged['YEAR'].max())}-{int(df_merged.iloc[-1]['MONTH']):02d}\n\n")
+    
+    f.write("KOEFISIEN MODEL OLS\n")
+    f.write("-"*65 + "\n")
+    for i, name in enumerate(feature_names):
+        sig = "***" if p_values[i]<0.001 else ("**" if p_values[i]<0.01 else ("*" if p_values[i]<0.05 else ""))
+        f.write(f"{name:<22} {beta_hat[i]:>12.6f} {se_beta[i]:>12.6f} {t_stat[i]:>10.4f} {p_values[i]:>10.4f} {sig:>5}\n")
+    
+    f.write("\n\nMETRIK EVALUASI\n")
+    f.write("-"*50 + "\n")
+    f.write(f"{'Metrik':<8} {'Training':>12} {'Test':>12} {'Keseluruhan':>14}\n")
+    f.write("-"*50 + "\n")
+    mnames = ['MAE','MAPE(%)','R²','RMSE']
+    for i, mn in enumerate(mnames):
+        f.write(f"{mn:<8} {metrics_train[i]:>12.6f} {metrics_test[i]:>12.6f} {metrics_all[i]:>14.6f}\n")
+    
+    f.write("\n\nDIAGNOSTIC TESTS\n")
+    f.write("-"*50 + "\n")
+    f.write(f"Durbin-Watson: {dw:.4f} - {dw_interp}\n")
+    f.write(f"Shapiro-Wilk: W={sw_stat:.4f}, p={sw_pval:.4f} - {sw_interp.replace('→', '->')}\n")
+    
+    f.write("\nVIF (Variance Inflation Factor)\n")
+    f.write("-"*40 + "\n")
+    for name, vif in zip(var_names, vif_values):
+        flag = " (TINGGI >10)" if vif > 10 else (" (SEDANG 5-10)" if vif > 5 else "")
+        f.write(f"{name:<22} VIF = {vif:.4f}{flag}\n")
+
+print("\n✓ Hasil analisis disimpan ke: outputs/hasil_analisis.txt")
+
+print("\nSemua gambar tersimpan di outputs/ (300 dpi)")
 print("="*65)

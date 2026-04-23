@@ -1,0 +1,43 @@
+=================================================================
+ANALISIS OLS - ESTIMASI DAYA PANEL SURYA
+=================================================================
+
+Total data: 132 baris
+Periode: 2015-01 s/d 2025-12
+
+KOEFISIEN MODEL OLS
+-----------------------------------------------------------------
+Intercept                  0.117499     0.021778     5.3954     0.0000   ***
+x1(ALLSKY_DWN)             0.178567     0.000062  2871.2497     0.0000   ***
+x2(T2M)                   -0.003615     0.000037   -97.2907     0.0000   ***
+x3(WS10M)                 -0.000028     0.000041    -0.6878     0.4932      
+x4(PS)                    -0.000194     0.000214    -0.9049     0.3677      
+x5(CLOUD_AMT)             -0.000003     0.000002    -1.2696     0.2072      
+x6(PRECTOT)               -0.000006     0.000005    -1.1679     0.2457      
+x7(ALLSKY_DNI)            -0.000054     0.000043    -1.2632     0.2095      
+
+
+METRIK EVALUASI
+--------------------------------------------------
+Metrik       Training         Test    Keseluruhan
+--------------------------------------------------
+MAE          0.000076     0.000114       0.000084
+MAPE(%)      0.008726     0.013653       0.009696
+R²           0.999998     0.999996       0.999997
+RMSE         0.000109     0.000155       0.000119
+
+
+DIAGNOSTIC TESTS
+--------------------------------------------------
+Durbin-Watson: 1.3711 - Autokorelasi positif terdeteksi
+Shapiro-Wilk: W=0.8989, p=0.0000 - Residual TIDAK berdistribusi normal (p < 0.05) -> catat sebagai batasan penelitian
+
+VIF (Variance Inflation Factor)
+----------------------------------------
+x1(ALLSKY_DWN)         VIF = 5.2434 (SEDANG 5-10)
+x2(T2M)                VIF = 1.7310
+x3(WS10M)              VIF = 2.3531
+x4(PS)                 VIF = 2.1584
+x5(CLOUD_AMT)          VIF = 3.3296
+x6(PRECTOT)            VIF = 2.2521
+x7(ALLSKY_DNI)         VIF = 7.6509 (SEDANG 5-10)
